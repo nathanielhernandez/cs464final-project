@@ -20,17 +20,38 @@
             document.body.appendChild( renderer.domElement );
 
             var geometry = new THREE.CylinderGeometry( 1, 1, .5, 16 );
-            var material = new THREE.MeshBasicMaterial( { color: 0xf48642 } );
+            var material = new THREE.MeshBasicMaterial( { color: 0xf48642, wireframe: true} );
             var cube = new THREE.Mesh( geometry, material );
             cube.rotation.x += 1.5708;
             scene.add( cube );
 
+            cube.position.y = 1;
             camera.position.z = 10;
+
+            var coins = [];
+            for (var i = 0; i < 100; i++){
+                var coinGeometry = new THREE.CylinderGeometry( 1, 1, .5, 16 );
+                var coinMaterial = new THREE.MeshBasicMaterial( { color: 0xf48642, wireframe: true} );
+                var coin = new THREE.Mesh( coinGeometry, coinMaterial );
+                coin.rotation.x += 1.5708;
+                coin.position.y = Math.round(100 * Math.random());
+                coin.position.x = 10 - Math.round(20 * Math.random());
+                coin.rotation.z = 5 * Math.random();
+                scene.add(coin);
+                coins.push(coin);
+            }
+
+            scene.add( coins );
 
             function animate() {
                 requestAnimationFrame( animate );
                 
                 cube.rotation.z += 0.01;
+
+                for (var i = 0; i < 100; i++){
+                    coins[i].position.y -= 0.1;
+                    coins[i].rotation.z += 0.05;
+                }   
 
                 renderer.render( scene, camera );
             }

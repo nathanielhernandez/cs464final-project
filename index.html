@@ -19,15 +19,19 @@
             renderer.setSize( window.innerWidth, window.innerHeight );
             document.body.appendChild( renderer.domElement );
 
-            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-            var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+            var geometry = new THREE.CylinderGeometry( 1, 1, .5, 16 );
+            var material = new THREE.MeshBasicMaterial( { color: 0xf48642 } );
             var cube = new THREE.Mesh( geometry, material );
+            cube.rotation.x += 1.5708;
             scene.add( cube );
 
-            camera.position.z = 5;
+            camera.position.z = 10;
 
             function animate() {
                 requestAnimationFrame( animate );
+                
+                cube.rotation.z += 0.01;
+
                 renderer.render( scene, camera );
             }
             animate();

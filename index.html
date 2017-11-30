@@ -10,8 +10,13 @@
 	</head>
 	<body>
     </body>
-		<script src="js/three.js"></script>
-		<script>
+        <script src="js/three.js"></script>
+        <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.0.min.js"/>
+
+        <script> // Model creation
+        </script>
+		<script> // Scene builder and driver
+            getPendingTransactions();
 			var scene = new THREE.Scene();
             var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
             
@@ -19,7 +24,7 @@
             renderer.setSize( window.innerWidth, window.innerHeight );
             document.body.appendChild( renderer.domElement );
 
-            var geometry = new THREE.CylinderGeometry( 1, 1, .5, 16 );
+            var geometry = new THREE.CylinderGeometry( 1, 1, .25, 16 );
             var material = new THREE.MeshBasicMaterial( { color: 0xf48642, wireframe: true} );
             var cube = new THREE.Mesh( geometry, material );
             cube.rotation.x += 1.5708;
@@ -30,7 +35,7 @@
 
             var coins = [];
             for (var i = 0; i < 100; i++){
-                var coinGeometry = new THREE.CylinderGeometry( 1, 1, .5, 16 );
+                var coinGeometry = new THREE.CylinderGeometry( 1, 1, 0.25, 16 );
                 var coinMaterial = new THREE.MeshBasicMaterial( { color: 0xf48642, wireframe: true} );
                 var coin = new THREE.Mesh( coinGeometry, coinMaterial );
                 coin.rotation.x += 1.5708;
@@ -39,10 +44,9 @@
                 coin.rotation.z = 5 * Math.random();
                 scene.add(coin);
                 coins.push(coin);
-            }
+            }           
 
-            scene.add( coins );
-
+            var counter = 10 * 60; // 10 seconds at 60 frames per second
             function animate() {
                 requestAnimationFrame( animate );
                 
@@ -51,10 +55,33 @@
                 for (var i = 0; i < 100; i++){
                     coins[i].position.y -= 0.1;
                     coins[i].rotation.z += 0.05;
+
+                    if(coins[i].position.y < -20) {
+                        coins[i].position.y = Math.round(100 * Math.random() + 50);
+                        coins[i].position.x = 10 - Math.round(20 * Math.random());
+                    }
                 }   
 
                 renderer.render( scene, camera );
+                counter--;
+                if(counter <= 0) {
+                    counter = 10 * 60;
+                    console.log("10 seconds");
+                }
             }
             animate();
-		</script>
+
+            var pendingTransactions = 0;
+
+            function getPendingTransactions() {
+                $.ajax({
+                    method: 'GET',
+                    url: 'https://blockchain.info/q/unconfirmedcount?cors=true'
+                }).done( function(resp) {
+                    pendingTransactions = resp;
+                });
+            };
+        </script>
+        <script> // API with global engine variables
+        </script>
 </html>
